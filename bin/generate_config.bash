@@ -1,12 +1,20 @@
 
 ANSWERS=answers.bash
-source ${ANSWERS}
+echo
+echo "Reading ${ANSWERS}"
+echo
+touch ${ANSWERS} && chmod 600 ${ANSWERS} && source ${ANSWERS}
 
+echo
+echo "Retrieving public key id"
+echo
 AWSSSHID=$(aws iam list-ssh-public-keys --user-name ${AWSUSER}|grep SSHPublicKeyId|awk '{print $2}'|sed 's/",//'|sed 's/"//')
 
 SSHCONFIG=~/.ssh/config
 
-echo "Config looks like:"
+echo
+echo "Current config contains:"
+echo
 touch ${SSHCONFIG} && cat ${SSHCONFIG}
 echo
 
@@ -20,11 +28,14 @@ then
   rm -rf ${SSHCONFIG}
 fi
 
+echo
 echo "Adding Host to config"
+echo
 echo "Host git-codecommit.${AWSREGION}.amazonaws.com" >> ${SSHCONFIG}
 echo "  User ${AWSSSHID}" >> ${SSHCONFIG}
 echo "  IdentityFile ${SSHFILE}" >> ${SSHCONFIG}
 chmod 600 ${SSHCONFIG}
 
+echo
 echo "DONE"
 echo
